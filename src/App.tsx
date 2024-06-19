@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
-import "./App.css";
-import { ICourse } from "./types/course";
+import { useEffect, useState } from "react";
+import { Course } from "./types";
 import { CourseList } from "./components/courseList/CourseList";
 import { TagList } from "./components/tagList/TagList";
-import { URL } from "./constants/default";
+import { URL } from "./constants";
+import "./App.css";
 
-function App() {
-  const [courses, setCourses] = useState<ICourse[]>([]);
-  const [visibleCourses, setVisibleCourses] = useState<ICourse[]>([]);
+export const App = () => {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [visibleCourses, setVisibleCourses] = useState<Course[]>([]);
 
   useEffect(() => {
     const getCourses = async () => {
       try {
         const response = await fetch(URL);
         const data = await response.json();
+
         setCourses(data);
         setVisibleCourses(data);
       } catch (error) {
@@ -34,6 +35,4 @@ function App() {
       </section>
     </div>
   );
-}
-
-export default App;
+};

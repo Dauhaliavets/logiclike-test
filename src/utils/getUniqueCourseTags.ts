@@ -1,17 +1,8 @@
-import { ICourse } from "../types/course";
+import { Course } from "../types";
 
-export const getUniqueCourseTags = (courses: ICourse[]): string[] => {
-  const tagsRate = courses.reduce((acc, cur) => {
-    cur.tags.forEach((tag) => {
-      if (acc[tag]) {
-        acc[tag] = acc[tag] + 1;
-      } else {
-        acc[tag] = 0;
-      }
-    });
+export const getUniqueCourseTags = (courses: Course[]): string[] =>
+  courses.reduce((acc, { tags }) => {
+    tags.forEach((tag) => !acc.includes(tag) && acc.push(tag));
 
     return acc;
-  }, {} as { [key: string]: number });
-
-  return Object.keys(tagsRate);
-};
+  }, [] as string[]);

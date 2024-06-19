@@ -1,4 +1,4 @@
-interface ICourse {
+interface Course {
   name: string;
   id: string;
   image: string;
@@ -6,4 +6,4 @@ interface ICourse {
   tags: string[];
 }
 
-export type { ICourse };
+export type { Course };

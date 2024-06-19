@@ -1,50 +1,49 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, memo, useEffect, useMemo, useState } from "react";
 import { TagItem } from "../tagItem/TagItem";
-import { DEFAULT_TAG } from "../../constants/default";
-import { ICourse } from "../../types/course";
+import { DEFAULT_TAG } from "../../constants";
+import { Course } from "../../types";
 import { getUniqueCourseTags } from "../../utils/getUniqueCourseTags";
 import s from "./TagList.module.css";
 
 interface TagListProps {
-  courses: ICourse[];
-  setVisibleCourses: (courses: ICourse[]) => void;
+  courses: Course[];
+  setVisibleCourses: (courses: Course[]) => void;
 }
 
-export const TagList: FC<TagListProps> = ({ courses, setVisibleCourses }) => {
-  const [tags, setTags] = useState<string[]>([]);
-  const [selectedTag, setSelectedTag] = useState<string>(DEFAULT_TAG);
+export const TagList: FC<TagListProps> = memo(
+  ({ courses, setVisibleCourses }) => {
+    const [selectedTag, setSelectedTag] = useState<string>(DEFAULT_TAG);
 
-  const handleClick = (event: React.MouseEvent<HTMLUListElement>) => {
-    const { target, currentTarget } = event;
-    if (target !== currentTarget) {
-      const tag = (target as HTMLLIElement).textContent;
+    const tags = useMemo(
+      () => [DEFAULT_TAG, ...getUniqueCourseTags(courses)],
+      [courses]
+    );
 
-      if (tag && tag !== selectedTag) {
+    const handleTagSelect = (tag: string) => () => {
+      if (tag !== selectedTag) {
         setSelectedTag(tag);
       }
-    }
-  };
+    };
 
-  useEffect(() => {
-    setTags([DEFAULT_TAG, ...getUniqueCourseTags(courses)]);
-  }, [courses]);
+    useEffect(() => {
+      const visibleCourses =
+        selectedTag !== DEFAULT_TAG
+          ? courses.filter((course) => course.tags.includes(selectedTag))
+          : courses;
+      setVisibleCourses(visibleCourses);
+    }, [selectedTag, courses, setVisibleCourses]);
 
-  useEffect(() => {
-    if (selectedTag === DEFAULT_TAG) {
-      setVisibleCourses(courses);
-    } else {
-      const filteredCourses = courses.filter((course) =>
-        course.tags.includes(selectedTag)
-      );
-      setVisibleCourses(filteredCourses);
-    }
-  }, [selectedTag, courses, setVisibleCourses]);
-
-  return (
-    <ul className={s.tagList} onClick={handleClick}>
-      {tags.map((tag, ind) => (
-        <TagItem key={ind} tagName={tag} isSelected={tag === selectedTag} />
-      ))}
-    </ul>
-  );
-};
+    return (
+      <ul className={s.tagList}>
+        {tags.map((tag) => (
+          <TagItem
+            key={tag}
+            tagName={tag}
+            isSelected={tag === selectedTag}
+            handleTagSelect={handleTagSelect}
+          />
+        ))}
+      </ul>
+    );
+  }
+);
