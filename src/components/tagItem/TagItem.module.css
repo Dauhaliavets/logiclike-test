@@ -1,0 +1,18 @@
+.tagItem {
+  padding: 12px;
+  border-radius: 12px;
+  color: #39414b;
+  background-color: #ffffff;
+  transition: background-color 0.2s linear;
+}
+.tagItem:hover {
+  cursor: pointer;
+  background-color: #eeeeee;
+}
+.tagItem.active {
+  color: #ffffff;
+  background-color: #5fbf77;
+}
+.tagItem.active:hover {
+  background-color: #58b06e;
+}
